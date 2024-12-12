@@ -15,6 +15,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path
-
+from pizza.views import PizzaListCreateView,PizzaRetrieveUpdateDestroyView
 urlpatterns = [
+    path('pizza', PizzaListCreateView.as_view()),
+    path('pizza/<int:pk>', PizzaRetrieveUpdateDestroyView.as_view()),
 ]
