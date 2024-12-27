@@ -9,8 +9,9 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 
 class PizzaListCreateView(ListAPIView):
     serializer_class = PizzaSerializer
-    queryset = PizzaModel.objects.less_than_size(100)
+    queryset = PizzaModel.objects.all()
     filterset_class = PizzaFilter
+    permission_classes = (AllowAny,)
     # permission_classes = (IsAuthenticated,)
     # pagination_class = None
 
