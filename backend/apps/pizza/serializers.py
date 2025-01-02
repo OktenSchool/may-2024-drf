@@ -22,3 +22,8 @@ class PizzaSerializer(serializers.ModelSerializer):
 
         return attrs
 
+
+class PizzaPhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PizzaModel
+        fields = ('photo',)
