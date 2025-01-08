@@ -12,6 +12,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAdminUser',
-    ]
+    ],
+    'EXCEPTION_HANDLER': 'core.handlers.error_handler.error_handler',
 
 }

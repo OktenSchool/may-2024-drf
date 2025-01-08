@@ -12,6 +12,10 @@ mysqlclient = "^2.2.6"
 django-filter = "^24.3"
 djangorestframework-simplejwt = "^5.3.1"
 pillow = "^11.0.0"
+celery = "^5.4.0"
+redis = "^5.2.1"
+django-celery-results = "^2.5.1"
+django-celery-beat = "^2.7.0"
 
 
 [tool.poetry.group.dev.dependencies]
