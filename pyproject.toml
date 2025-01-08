@@ -16,6 +16,9 @@ celery = "^5.4.0"
 redis = "^5.2.1"
 django-celery-results = "^2.5.1"
 django-celery-beat = "^2.7.0"
+djangochannelsrestframework = "^1.2.0"
+daphne = "^4.1.2"
+channels-redis = "^4.2.1"
 
 
 [tool.poetry.group.dev.dependencies]
