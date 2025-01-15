@@ -22,6 +22,11 @@ class ChatConsumer(GenericAsyncAPIConsumer):
         room_name = self.scope['url_route']['kwargs']['room']
         self.room, _ = await ChatRoomModel.objects.aget_or_create(name=room_name)
         self.user_name = await self.get_profile_name()
+        print(f'user_{self.scope["user"].id}', '#####################################')
+        self.channel_layer.group_add(
+            f'user_{self.scope["user"].id}',
+            self.channel_name
+        )
         await self.channel_layer.group_add(
             self.room.name,
             self.channel_name
@@ -29,10 +34,10 @@ class ChatConsumer(GenericAsyncAPIConsumer):
 
         messages = await self.get_last_five_messages()
 
-        for text, name  in messages:
+        for name, text  in messages:
             await self.sender({
                     'message': text,
-                    'user': name,
+                    'user': f'{name}',
                     'request_id': str(datetime.datetime.now())
             })
 
@@ -41,7 +46,7 @@ class ChatConsumer(GenericAsyncAPIConsumer):
             self.room.name,
             {
                 'type': 'sender',
-                'message': f'{self.user_name} connected to chat'
+                'message': f'{self.scope['user'].id}_{self.user_name} connected to chat'
             }
         )
 
@@ -51,14 +56,30 @@ class ChatConsumer(GenericAsyncAPIConsumer):
 
     @action()
     async def send_message(self, data, request_id, action):
-        await MessageModel.objects.acreate(room=self.room, user=self.scope['user'], text=data)
+        print(data, '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+        await MessageModel.objects.acreate(room=self.room, user=self.scope['user'], text=data['text'])
         await self.channel_layer.group_send(
             self.room.name,
             {
                 'type': 'sender',
-                'message':data,
+                'message':data['text'],
                 'user':self.user_name,
                 'id':request_id
+            }
+        )
+
+    @action()
+    async def send_private_message(self, data, request_id, action):
+        print(data)
+        await MessageModel.objects.acreate(room=self.room, user=self.scope['user'], text=data['text'])
+        print(f'user_{data['userId']}', '((((((((((((((((((((((((((((((((((((')
+        await self.channel_layer.group_send(
+            f'user_{data['userId']}',
+            {
+                'type': 'sender',
+                'message': data['text'],
+                'user': self.user_name,
+                'id': request_id
             }
         )
     @database_sync_to_async
@@ -68,5 +89,5 @@ class ChatConsumer(GenericAsyncAPIConsumer):
 
     @database_sync_to_async
     def get_last_five_messages(self):
-        res = self.room.messages.annotate(name=F('user__profile__name')).values('text', 'name').order_by('-id')[:5]
-        return reversed([(message['name'], message['text']) for message in res])
+        res = self.room.messages.annotate(name=F('user__profile__name'), pk=F('user__pk')).values('text', 'name', 'pk').order_by('-id')[:5]
+        return reversed([(f'{message['pk']}_{message['name']}', message['text']) for message in res])
