@@ -30,3 +30,7 @@ class PizzaPhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = PizzaModel
         fields = ('photo',)
+
+
+class PizzaResponseSerializer(serializers.Serializer):
+    details = serializers.CharField(default='hello')

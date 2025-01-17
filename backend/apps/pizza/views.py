@@ -1,16 +1,24 @@
 from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView, UpdateAPIView, ListCreateAPIView
-from rest_framework.permissions import AllowAny
-
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
+from django.utils.decorators import method_decorator
 from apps.pizza.filter import PizzaFilter
 from apps.pizza.models import PizzaModel
-from apps.pizza.serializers import PizzaSerializer, PizzaPhotoSerializer
-
-
+from apps.pizza.serializers import PizzaSerializer, PizzaPhotoSerializer, PizzaResponseSerializer
+from drf_yasg.utils import swagger_auto_schema
+@method_decorator(
+    name='get',
+    decorator=swagger_auto_schema(
+        security=[],
+        operation_description='Hahaha',
+        responses={200: PizzaResponseSerializer()},
+        operation_summary='get all piizas'
+    )
+)
 class PizzaListCreateView(ListCreateAPIView):
     serializer_class = PizzaSerializer
     queryset = PizzaModel.objects.all()
     filterset_class = PizzaFilter
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     # permission_classes = (IsAuthenticated,)
     # pagination_class = None
 

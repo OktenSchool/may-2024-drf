@@ -35,6 +35,10 @@ class BlockUserView(GenericAPIView):
 
 
 class UnBlockUserView(GenericAPIView):
+
+    def get_serializer(self):
+        return None
+
     def get_queryset(self):
         return UserModel.objects.exclude(id=self.request.user.id)
 

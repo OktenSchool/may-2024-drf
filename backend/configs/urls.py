@@ -17,12 +17,25 @@ Including another URLconf
 from django.conf import settings
 from django.urls import include, path
 from django.conf.urls.static import static
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from rest_framework.permissions import AllowAny
 
+schema_view = get_schema_view(
+    openapi.Info(
+        title="About Pizza",
+        default_version='v1',
+        description="Pizza Shop",
+        contact=openapi.Contact(email="admin@gmail.com")
+    ), public=True,
+    permission_classes=[AllowAny],
+)
 urlpatterns = [
     path('api/pizzas', include('apps.pizza.urls')),
     path('api/pizza_shops', include('apps.pizza_shop.urls')),
     path('api/auth', include('apps.auth.urls')),
     path('api/users', include('apps.user.urls')),
+    path('api/doc', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
